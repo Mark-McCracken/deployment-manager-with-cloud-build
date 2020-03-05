@@ -1,0 +1,72 @@
+resources:
+- name: private-cluster
+  type: container.v1.cluster
+  properties:
+    zone: europe-west2-a
+    cluster:
+      description: demo private cluster with snat for cloud build / deployment manager testing
+      network: $(ref.custom-network.selfLink)
+      initial_node_count: 1
+      privateClusterConfig:
+        enablePrivateNodes: true
+        enablePrivateEndpoint: false
+        masterIpv4CidrBlock: 172.16.0.0/28
+      ipAllocationPolicy:
+        useIpAliases: true
+      masterAuthorizedNetworksConfig:
+        enabled: true
+        cidrBlocks:
+        - displayName: public
+          cidrBlock: 93.93.84.0/24
+      addonsConfig:
+        httpLoadBalancing:
+          disabled: false
+        networkPolicyConfig:
+          disabled: false
+        kubernetesDashboard:
+          disabled: false
+        cloudRunConfig:
+          disabled: false
+
+
+- name: alpha-pool
+  type: container.v1.nodePool
+  properties:
+    parent: $(ref.private-cluster.name)
+    nodePool:
+      config:
+        machineType: n1-standard-1
+        diskSizeGb: 35
+        diskType: pd-ssd
+      initialNodeCount: 1
+      locations:
+      - europe-west2-a
+    clusterId: $(ref.private-cluster.name)
+    zone: europe-west2-a
+
+- name: nat-address
+  type: compute.v1.address
+  properties:
+    description: Used for Custom Network NAT
+    region: europe-west2
+
+- name: custom-network
+  type: compute.v1.network
+  properties:
+    autoCreateSubnetworks: true
+    description: A custom network for hosting kubernetes clusters
+    routingConfig:
+      routingMode: GLOBAL
+
+- name: router
+  type: compute.v1.router
+  properties:
+    description: Used for NAT
+    network: $(ref.custom-network.selfLink)
+    region: europe-west2
+    nats:
+    - name: k8s-snat
+      sourceSubnetworkIpRangesToNat: ALL_SUBNETWORKS_ALL_IP_RANGES
+      natIps:
+      - $(ref.nat-address.selfLink)
+      natIpAllocateOption: MANUAL_ONLY

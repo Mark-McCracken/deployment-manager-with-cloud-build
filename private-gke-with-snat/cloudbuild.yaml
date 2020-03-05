@@ -1,0 +1,9 @@
+steps:
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - deployment-manager
+  - deployments
+  - update
+  - quiet-kate
+  - --config
+  - private-gke-with-snat/gke.yaml
