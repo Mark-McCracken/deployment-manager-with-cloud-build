@@ -3,7 +3,7 @@ steps:
   args:
   - deployment-manager
   - deployments
-  - update
+  - create
   - quiet-kate
   - --config
   - private-gke-with-snat/gke.yaml
