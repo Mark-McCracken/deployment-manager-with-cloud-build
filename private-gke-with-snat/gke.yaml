@@ -16,10 +16,8 @@ resources:
       masterAuthorizedNetworksConfig:
         enabled: true
         cidrBlocks:
-        - displayName: workplace
+        - displayName: public
           cidrBlock: 93.93.84.0/24
-        - displayName: homeplace
-          cidrBlock: 123.45.67.89/32
       addonsConfig:
         httpLoadBalancing:
           disabled: false
@@ -31,7 +29,7 @@ resources:
           disabled: false
 
 
-- name: alpha-pool
+- name: beta-pool
   type: container.v1.nodePool
   properties:
     parent: $(ref.private-cluster.name)
@@ -40,7 +38,7 @@ resources:
         machineType: n1-standard-1
         diskSizeGb: 35
         diskType: pd-ssd
-      initialNodeCount: 1
+      initialNodeCount: 2
       locations:
       - europe-west2-a
     clusterId: $(ref.private-cluster.name)
