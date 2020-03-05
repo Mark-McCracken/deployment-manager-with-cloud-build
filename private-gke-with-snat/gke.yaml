@@ -16,8 +16,10 @@ resources:
       masterAuthorizedNetworksConfig:
         enabled: true
         cidrBlocks:
-        - displayName: public
+        - displayName: workplace
           cidrBlock: 93.93.84.0/24
+        - displayName: homeplace
+          cidrBlock: 123.45.67.89/32
       addonsConfig:
         httpLoadBalancing:
           disabled: false
